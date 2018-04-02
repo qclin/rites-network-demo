@@ -15,14 +15,18 @@ import './Assets/css/default.min.css';
 
 
 class App extends React.Component {
-  state = {
-    clickData: {}
-  };
+
 
   constructor() {
     super()
-    this.spawnEnemies = new UnityEvent("SpawnBehaviour", "SpawnEnemies");
+    this.state = {
+      inputValue: '',
+      clickData: {}
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.logToFire = this.logToFire.bind(this);
 
+    this.spawnEnemies = new UnityEvent("SpawnBehaviour", "SpawnEnemies");
   }
 
   componentDidMount() {
@@ -34,6 +38,12 @@ class App extends React.Component {
       this.setState({ clickData: snap.val() }); // ******** can also store data in PROP
       console.log("clickData ---- ", this.state.clickData)
     });
+  }
+
+  // FROM sections see: https://reactjs.org/docs/forms.html
+  handleChange(event) {
+    console.log("handleChange ----- ", event.target.value);
+    this.setState({inputValue: event.target.value});
   }
 
 
@@ -48,18 +58,18 @@ class App extends React.Component {
   }
 
   logToFire(event){
-
+    event.preventDefault();
     const name = event.target[0].value;
     console.log('nammmmme :', name);
 
     var timestamp = new Date().toString();
 
     this.clickDataRef.push({
-        timestamp: name
+        timestamp: "test test"
     })
   }
-
-  // {this.clickData.map(function(listValue){
+  // TODO: need dummy data until firebase fetch loads
+  // {this.state.clickData.map(function(listValue){
   //   return <li>{listValue}</li>;
   // })}
   render() {
@@ -69,8 +79,13 @@ class App extends React.Component {
       <ul>
 
       </ul>
+      <input type="text" placeholder="round two"/>
       <form onSubmit={this.logToFire.bind(this)}>
-        <input type="text" placeholder="Name this"/>
+        <input type="text"
+          placeholder="Name this"
+          value={this.state.inputValue}
+          ref="nameStringInput"
+          onChange={this.handleChange}/>
         <button type="submit"> submit </button>
       </form>
       <div onClick={this.onClickSpawnEnemies.bind(this, 5)}>
@@ -80,7 +95,6 @@ class App extends React.Component {
 
       <Unity src='Build/spawntest.json' loader='Build/UnityLoader.js'
       onProgress={ this.onProgress } />
-      />
       </div>
     );
   }
