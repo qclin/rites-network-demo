@@ -1,0 +1,63 @@
+/*
+VARS
+*/
+$black: #706e6e;
+$white: #faf9f9;
+$lightGrey: #aaaaaa;
+$darkGrey: #302d2d;
+$red: rgb(209, 40, 40);
+
+/*
+FONTS
+
+regular 400
+bold 700
+*/
+
+@font-face {
+	font-family: "EuroseCond";
+    src: url("./fonts/EuroseCond Bold.ttf") format("truetype");
+}
+
+/*
+MIXINS
+*/
+
+@mixin translateY($e) {
+    -webkit-transform: translateY($e);
+    -moz-transform: translateY($e);
+    transform: translateY($e);
+}
+
+@mixin transition($e) {
+    -webkit-transition:$e;
+    -moz-transition:$e;
+    transition:$e;
+}
+
+body{
+    font-family: EuroseCond;
+    font-size: 18px;
+    color: $darkGrey;
+    font-weight: 300;
+    font-style: normal;
+}
+
+p{
+    font-family: EuroseCond;
+}
+
+a {
+    text-decoration: none;
+    @include transition(.4s ease-in-out);
+    cursor: pointer;
+
+    &:hover {
+        color: $red;
+        @include transition((.4s ease-in-out));
+    }
+}
+
+.container-fluid {
+    line-height: 24px;
+}
