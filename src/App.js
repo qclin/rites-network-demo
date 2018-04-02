@@ -24,7 +24,7 @@ class App extends React.Component {
       clickData: {},
       tagData: {}
     };
-    this.handleChange = this.handleChange.bind(this);
+    // this.handleChange = this.handleChange.bind(this);
     this.logToFire = this.logToFire.bind(this);
 
     this.spawnEnemies = new UnityEvent("SpawnBehaviour", "SpawnEnemies");
@@ -81,6 +81,7 @@ class App extends React.Component {
 
   // save function for listerner
   postToFirebase(tags){
+    console.log("postToFirebase", tags)
     var payload = tags.split('|');
     // positionX| postionY| positionZ| tag1| tag2| tag3
 
@@ -88,9 +89,9 @@ class App extends React.Component {
     var positionY = payload[1];
     var positionZ = payload[2];
 
-    var tags = payload.splice(3,-1);
+    var tagString = payload.splice(3,-1);
 
-    console.log(positionX, positionY, positionZ, tags);
+    console.log(positionX, positionY, positionZ, tagString);
     this.tagDataRef.push({
         timestamp: "test test"
     });
