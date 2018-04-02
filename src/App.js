@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Unity from "react-unity-webgl";
-import { UnityEvent } from "react-unity-webgl";
+import { UnityEvent, RegisterExternalListener } from "react-unity-webgl";
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import firebase from './scripts/firebase'
 //components
@@ -21,30 +21,52 @@ class App extends React.Component {
     super()
     this.state = {
       inputValue: '',
-      clickData: {}
+      clickData: {},
+      tagData: {}
     };
     this.handleChange = this.handleChange.bind(this);
     this.logToFire = this.logToFire.bind(this);
 
     this.spawnEnemies = new UnityEvent("SpawnBehaviour", "SpawnEnemies");
+
+    // emit to unity here
+    this.loadData = new UnityEvent("ReactManagerObject", "LoadData");
+    // unity will ping this
+    RegisterExternalListener('SaveData', this.postToFirebase.bind(this));
+
   }
 
+
+  componentWillMount(){
+    // firebase.auth().signInAnonymously().catch(function(error) {
+    //   // Handle Errors here.
+    //   var errorCode = error.code;
+    //   var errorMessage = error.message;
+    //   // ...
+    // });
+  }
   componentDidMount() {
     // Updating the `someData` local state attribute when the Firebase Realtime Database data
     // under the '/someData' path changes.
     this.clickDataRef = firebase.database().ref('/clickData');
     this.clickDataCallback = this.clickDataRef.on('value', (snap) => {
-      console.log("snapval ---- ", snap.val());
       this.setState({ clickData: snap.val() }); // ******** can also store data in PROP
-      console.log("clickData ---- ", this.state.clickData)
+    });
+
+    this.tagDataRef = firebase.database().ref('/tagData');
+
+    // here need to push a new role with ANONYMOUS AUTH ID
+
+    this.tagDataCallback = this.tagDataRef.on('value', (snap) => {
+      this.setState({ tagData: snap.val() }); // ******** can also store data in PROP
     });
   }
 
-  // FROM sections see: https://reactjs.org/docs/forms.html
-  handleChange(event) {
-    console.log("handleChange ----- ", event.target.value);
-    this.setState({inputValue: event.target.value});
-  }
+  // // FROM sections see: https://reactjs.org/docs/forms.html
+  // handleChange(event) {
+  //   console.log("handleChange ----- ", event.target.value);
+  //   this.setState({inputValue: event.target.value});
+  // }
 
 
   onProgress (progression) {
@@ -57,6 +79,22 @@ class App extends React.Component {
     if (this.spawnEnemies.canEmit() === true) this.spawnEnemies.emit(count);
   }
 
+  // save function for listerner
+  postToFirebase(tags){
+    var payload = tags.split('|');
+    // positionX| postionY| positionZ| tag1| tag2| tag3
+
+    var positionX = payload[0];
+    var positionY = payload[1];
+    var positionZ = payload[2];
+
+    var tags = payload.splice(3,-1);
+
+    console.log(positionX, positionY, positionZ, tags);
+    this.tagDataRef.push({
+        timestamp: "test test"
+    });
+  }
   logToFire(event){
     event.preventDefault();
     const name = event.target[0].value;
@@ -76,10 +114,6 @@ class App extends React.Component {
 
     return (
       <div>
-      <ul>
-
-      </ul>
-      <input type="text" placeholder="round two"/>
       <form onSubmit={this.logToFire.bind(this)}>
         <input type="text"
           placeholder="Name this"
