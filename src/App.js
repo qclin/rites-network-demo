@@ -93,7 +93,7 @@ class App extends React.Component {
       </div>
 
 
-      <Unity src='Build/spawntest.json' loader='Build/UnityLoader.js'
+      <Unity src='Build/whiteboard01.json' loader='Build/UnityLoader.js'
       onProgress={ this.onProgress } />
       </div>
     );
