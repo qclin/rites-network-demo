@@ -72,7 +72,8 @@ class App extends React.Component {
   componentDidMount() {
     let $this = this;
     this.tagDataRef = firebase.database().ref('/tagData');
-    this.tagDataCallback = this.tagDataRef.on('value', (snap) => {
+    // can increase this to last 100, once we test 3 is reached
+    this.tagDataCallback = this.tagDataRef.limitToLast(5).on('value', (snap) => {
       var payload = snap.val();
       console.log("tagData:   ", typeof payload, payload);
       // # TODO: emit all to Unity, array of dictionaries?
@@ -90,7 +91,7 @@ class App extends React.Component {
           console.log("11111:::: ", entry);
           if(entry){
             var parameterArr = Object.keys(entry).reduce(function(res, v) {
-                console.log("2222 :::: ", entry[v])
+                // console.log("2222 :::: ", entry[v])
                 return res.concat(entry[v]);
             }, []);
             console.log("33333 :::: ", parameterArr);
@@ -98,6 +99,7 @@ class App extends React.Component {
             var parameterString = parameterArr.join('|');
             console.log("444444 :::: ", parameterString);
             // READY TO EMIT !
+            if($this.loadData.canEmit()) $this.loadData.emit(parameterString);
           }
         });
       });
