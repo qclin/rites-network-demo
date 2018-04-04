@@ -78,7 +78,18 @@ class App extends React.Component {
     // here for loading all tag datas
     this.tagDataRef = firebase.database().ref('/tagData');
     this.tagDataCallback = this.tagDataRef.on('value', (snap) => {
-      this.setState({ tagData: snap.val() }); // ******** can also store data in PROP
+      var payload = snap.val();
+      console.log("tagData:   ", typeof payload, payload);
+      // # TODO: emit all to Unity, array of dictionaries?
+
+      const userArray = Object.keys(payload);
+
+      console.log("userArray ::: ", userArray)
+
+
+      // this.setState({ tagData: snap.val() }); // ******** can also store data in PROP
+
+
     });
   }
   onProgress (progression) {
