@@ -70,28 +70,41 @@ class App extends React.Component {
 
 
   componentDidMount() {
-    // Updating the `someData` local state attribute when the Firebase Realtime Database data
-    this.clickDataRef = firebase.database().ref('/clickData');
-    this.clickDataCallback = this.clickDataRef.on('value', (snap) => {
-      this.setState({ clickData: snap.val() }); // ******** can also store data in PROP
-    });
-    // here for loading all tag datas
+    let $this = this;
     this.tagDataRef = firebase.database().ref('/tagData');
     this.tagDataCallback = this.tagDataRef.on('value', (snap) => {
       var payload = snap.val();
       console.log("tagData:   ", typeof payload, payload);
       // # TODO: emit all to Unity, array of dictionaries?
-
       const userArray = Object.keys(payload);
+      userArray.forEach(function(user, index){
+        console.log("0000::: ", user, payload[user]);
+        var userPayload = payload[user];
+        var entries = Object.keys(userPayload).map(i => {
+          if(i != 'timestamp'){
+            return userPayload[i]
+          }
+        });
 
-      console.log("userArray ::: ", userArray)
-
-
-      // this.setState({ tagData: snap.val() }); // ******** can also store data in PROP
-
-
+        entries.forEach(function(entry, index, arr){
+          console.log("11111:::: ", entry);
+          if(entry){
+            var parameterArr = Object.keys(entry).reduce(function(res, v) {
+                console.log("2222 :::: ", entry[v])
+                return res.concat(entry[v]);
+            }, []);
+            console.log("33333 :::: ", parameterArr);
+            parameterArr.unshift($this.state.userID);
+            var parameterString = parameterArr.join('|');
+            console.log("444444 :::: ", parameterString);
+            // READY TO EMIT !
+          }
+        });
+      });
     });
   }
+
+
   onProgress (progression) {
     console.log (`Loading ${(progression * 100)} % ...`)
     if (progression === 1)
