@@ -51,15 +51,20 @@ class App extends React.Component {
 
   createUserEntry(userID){
     this.setState({userID});
-    //#1 push a new role with ANONYMOUS AUTH ID
-    var timestamp = new Date().toString();
-    // add child with timestamp to create initial entry
-    
-    // TODO : future-proof, check if user already have an entry before overriding the row
-    firebase.database().ref('/tagData').child(userID).set({timestamp});
-    console.log("createUserEntry: tagData : userID :",  userID);
-    //#2 create session ref from the authID
+    //#1 create session ref from the authID
     this.userRef = firebase.database().ref(`/tagData/${userID}`);
+    this.userRef.on('value', (snap) => {
+      const userData = snap.val();
+      //future-proof, check if user already have an entry before overriding the row
+      if(!userData){
+        //#2 initialize child with ANONYMOUS AUTH ID & timestamp
+        var timestamp = new Date().toString();
+        firebase.database().ref('/tagData').child(userID).set({timestamp});
+      }else{
+        console.log('user exists in database, continue ', userData);
+      }
+    });
+    console.log("createUserEntry: tagData : userID :",  userID);
   }
 
 
