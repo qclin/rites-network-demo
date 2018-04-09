@@ -24,9 +24,6 @@ class App extends React.Component {
       clickData: {},
       tagData: {}
     };
-    // this.handleChange = this.handleChange.bind(this);
-    this.logToFire = this.logToFire.bind(this);
-
     this.spawnEnemies = new UnityEvent("SpawnBehaviour", "SpawnEnemies");
 
     // emit to unity here
@@ -70,9 +67,9 @@ class App extends React.Component {
 
 
   componentDidMount() {
-    let $this = this;
+    var $this = this;
     this.tagDataRef = firebase.database().ref('/tagData');
-    // can increase this to last 100, once we test 3 is reached
+    // can increase this to last 100, once we test 5 is reached
     this.tagDataCallback = this.tagDataRef.limitToLast(5).on('value', (snap) => {
       var payload = snap.val();
       console.log("tagData:   ", typeof payload, payload);
@@ -88,7 +85,6 @@ class App extends React.Component {
         });
 
         entries.forEach(function(entry, index, arr){
-          console.log("11111:::: ", entry);
           if(entry){
             var parameterArr = Object.keys(entry).reduce(function(res, v) {
                 // console.log("2222 :::: ", entry[v])
@@ -99,22 +95,23 @@ class App extends React.Component {
             var parameterString = parameterArr.join('|');
             console.log("444444 :::: ", parameterString);
             // READY TO EMIT !
-            if($this.loadData.canEmit()) $this.loadData.emit(parameterString);
+            $this.sendToUnity(parameterString);
           }
         });
       });
     });
   }
 
+  sendToUnity(payload){
+    if(this.loadData.canEmit()) this.loadData.emit(payload); // this is throwing error,
+  }
 
   onProgress (progression) {
     console.log (`Loading ${(progression * 100)} % ...`)
-    if (progression === 1)
+    if (progression === 1){
+      // perhaps need to move the emitting inside when progression is at 100 % 
       console.log (`Loading done!`)
-  }
-
-  onClickSpawnEnemies(count) {
-    if (this.spawnEnemies.canEmit() === true) this.spawnEnemies.emit(count);
+    }
   }
 
   // save function for listerner
@@ -134,39 +131,9 @@ class App extends React.Component {
     });
   }
 
-  // deprived ---- use to post from react input fields
-  logToFire(event){
-    event.preventDefault();
-    const name = event.target[0].value;
-    console.log('nammmmme :', name);
-
-    var timestamp = new Date().toString();
-
-    this.clickDataRef.push({
-        timestamp: "test test"
-    })
-  }
-  // TODO: need dummy data until firebase fetch loads
-  // {this.state.clickData.map(function(listValue){
-  //   return <li>{listValue}</li>;
-  // })}
   render() {
-
     return (
       <div>
-      <form onSubmit={this.logToFire.bind(this)}>
-        <input type="text"
-          placeholder="Name this"
-          value={this.state.inputValue}
-          ref="nameStringInput"
-          onChange={this.handleChange}/>
-        <button type="submit"> submit </button>
-      </form>
-      <div onClick={this.onClickSpawnEnemies.bind(this, 5)}>
-        Click to Spawn 5 Enemies
-      </div>
-
-
       <Unity src='Build/whiteboard01.json' loader='Build/UnityLoader.js'
       onProgress={ this.onProgress } />
       </div>
