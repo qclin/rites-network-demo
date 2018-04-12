@@ -68,6 +68,10 @@ class App extends React.Component {
 
 
   componentDidMount() {
+
+  }
+
+  triggerLoadData(){
     var $this = this;
     this.tagDataRef = firebase.database().ref('/tagData');
     // can increase this to last 100, once we test 5 is reached
@@ -101,8 +105,8 @@ class App extends React.Component {
         });
       });
     });
-  }
 
+  }
   sendToUnity(payload){
     console.log(":::::::: sendToUnity", payload )
     if(this.loadData.canEmit() && this.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
@@ -114,6 +118,7 @@ class App extends React.Component {
       // perhaps need to move the emitting inside when progression is at 100 %
       console.log (`Loading done!`)
       this.setState({unityisLoaded: true})
+      this.triggerLoadData();
     }
   }
 
