@@ -137,7 +137,8 @@ class App extends React.Component {
   render() {
     return (
       <div>
-      onProgress={ this.onProgress } />
+      <Unity src='Build/wb009_low5.json' loader='Build/UnityLoader.js'
+      onProgress={ this.onProgress.bind(this) } />
       </div>
     );
   }
