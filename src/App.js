@@ -22,7 +22,8 @@ class App extends React.Component {
     this.state = {
       inputValue: '',
       clickData: {},
-      tagData: {}
+      tagData: {},
+      unityisLoaded: false
     };
     this.spawnEnemies = new UnityEvent("SpawnBehaviour", "SpawnEnemies");
 
@@ -103,14 +104,16 @@ class App extends React.Component {
   }
 
   sendToUnity(payload){
-    if(this.loadData.canEmit()) this.loadData.emit(payload); // this is throwing error,
+    console.log(":::::::: sendToUnity", payload )
+    if(this.loadData.canEmit() && this.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
   }
 
   onProgress (progression) {
     console.log (`Loading ${(progression * 100)} % ...`)
     if (progression === 1){
-      // perhaps need to move the emitting inside when progression is at 100 % 
+      // perhaps need to move the emitting inside when progression is at 100 %
       console.log (`Loading done!`)
+      this.setState({unityisLoaded: true})
     }
   }
 
@@ -135,7 +138,7 @@ class App extends React.Component {
     return (
       <div>
       <Unity src='Build/build01.json' loader='Build/UnityLoader.js'
-      onProgress={ this.onProgress } />
+      onProgress={ this.onProgress.bind(this) } />
       </div>
     );
   }
