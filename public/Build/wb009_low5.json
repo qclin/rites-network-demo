@@ -1,0 +1,13 @@
+{
+"companyName": "Rites Network",
+"productName": "rn_whitebox",
+"dataUrl": "wb009_low5.data.unityweb",
+"asmCodeUrl": "wb009_low5.asm.code.unityweb",
+"asmMemoryUrl": "wb009_low5.asm.memory.unityweb",
+"asmFrameworkUrl": "wb009_low5.asm.framework.unityweb",
+"TOTAL_MEMORY": 536870912,
+"graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20"
+}
