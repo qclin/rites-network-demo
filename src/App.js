@@ -70,7 +70,7 @@ class App extends React.Component {
 
   }
 
-  initialLoadData(){
+  triggerLoadData(){
     var $this = this;
     this.tagDataRef = firebase.database().ref('/tagData');
     // can increase this to last 100, once we test 5 is reached
@@ -113,7 +113,7 @@ class App extends React.Component {
       // perhaps need to move the emitting inside when progression is at 100 %
       console.log (`Loading done!`)
       this.setState({unityisLoaded: true})
-      setTimeout(this.initialLoadData.bind(this), 5000);
+      setTimeout(this.triggerLoadData.bind(this), 5000);
     }
   }
 
