@@ -51,7 +51,7 @@ class App extends React.Component {
     this.setState({userID});
     //#1 create session ref from the authID
     this.userRef = firebase.database().ref(`/tagData/${userID}`);
-    this.userRef.on('value', (snap) => {
+    this.userRef.once('value', (snap) => {
       const userData = snap.val();
       //future-proof, check if user already have an entry before overriding the row
       if(!userData){
@@ -66,16 +66,15 @@ class App extends React.Component {
   }
 
 
-
   componentDidMount() {
 
   }
 
-  triggerLoadData(){
+  initialLoadData(){
     var $this = this;
     this.tagDataRef = firebase.database().ref('/tagData');
     // can increase this to last 100, once we test 5 is reached
-    this.tagDataCallback = this.tagDataRef.limitToLast(5).on('value', (snap) => {
+    this.tagDataCallback = this.tagDataRef.limitToLast(100).once('value', (snap) => {
       var payload = snap.val();
       console.log("tagData:   ", typeof payload, payload);
       // # TODO: emit all to Unity, array of dictionaries?
@@ -88,26 +87,22 @@ class App extends React.Component {
             return userPayload[i]
           }
         });
-
         entries.forEach(function(entry, index, arr){
           if(entry){
-            var parameterArr = Object.keys(entry).reduce(function(res, v) {
-                // console.log("2222 :::: ", entry[v])
-                return res.concat(entry[v]);
-            }, []);
-            console.log("33333 :::: ", parameterArr);
-            parameterArr.unshift($this.state.userID);
-            var parameterString = parameterArr.join('|');
-            console.log("444444 :::: ", parameterString);
-            // READY TO EMIT !
-            $this.sendToUnity(parameterString);
+            $this.sendToUnity(entry);
           }
         });
       });
     });
 
   }
-  sendToUnity(payload){
+  sendToUnity(entry){
+    // PARSE
+    var parameterArr = Object.keys(entry).reduce(function(res, v) {
+        return res.concat(entry[v]);
+    }, []);
+    parameterArr.unshift(this.state.userID);
+    var payload = parameterArr.join('|');
     console.log(":::::::: sendToUnity", payload )
     if(this.loadData.canEmit() && this.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
   }
@@ -118,7 +113,7 @@ class App extends React.Component {
       // perhaps need to move the emitting inside when progression is at 100 %
       console.log (`Loading done!`)
       this.setState({unityisLoaded: true})
-      this.triggerLoadData();
+      setTimeout(this.initialLoadData.bind(this), 5000);
     }
   }
 
