@@ -103,7 +103,7 @@ class App extends React.Component {
     }, []);
     parameterArr.unshift(this.state.userID);
     var payload = parameterArr.join('|');
-    console.log(":::::::: sendToUnity", this.state.unityisLoaded payload )
+    console.log(":::::::: sendToUnity", this.state.unityisLoaded, payload);
     if(this.loadData.canEmit() && this.state.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
   }
 
@@ -133,7 +133,7 @@ class App extends React.Component {
       positionX, positionY, positionZ, tagString
     });
   }
-  
+
   render() {
     return (
       <div>
