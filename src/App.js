@@ -134,11 +134,19 @@ class App extends React.Component {
     });
   }
 
+  onClickSendRandomString(randomstr) {
+    if (this.loadData.canEmit() === true) this.loadData.emit(randomstr);
+  }
+
   render() {
     return (
+      <div onClick={this.onClickSendRandomString.bind(this, "HELLOOUNITY|0|0|0|tag|tagg|tagggg")}>
+        CLICK TO SEND RANDOM STRING
+      
       <div>
-      <Unity src='Build/wb009_low5.json' loader='Build/UnityLoader.js'
+      <Unity src='Build/brbuld.json' loader='Build/UnityLoader.js'
       onProgress={ this.onProgress.bind(this) } />
+      </div>
       </div>
     );
   }
