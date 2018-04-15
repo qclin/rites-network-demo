@@ -103,8 +103,8 @@ class App extends React.Component {
     }, []);
     parameterArr.unshift(this.state.userID);
     var payload = parameterArr.join('|');
-    console.log(":::::::: sendToUnity", payload )
-    if(this.loadData.canEmit() && this.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
+    console.log(":::::::: sendToUnity", this.state.unityisLoaded payload )
+    if(this.loadData.canEmit() && this.state.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
   }
 
   onProgress (progression) {
@@ -113,7 +113,7 @@ class App extends React.Component {
       // perhaps need to move the emitting inside when progression is at 100 %
       console.log (`Loading done!`)
       this.setState({unityisLoaded: true})
-      setTimeout(this.triggerLoadData.bind(this), 5000);
+      this.triggerLoadData()
     }
   }
 
@@ -133,20 +133,12 @@ class App extends React.Component {
       positionX, positionY, positionZ, tagString
     });
   }
-
-  onClickSendRandomString(randomstr) {
-    if (this.loadData.canEmit() === true) this.loadData.emit(randomstr);
-  }
-
+  
   render() {
     return (
-      <div onClick={this.onClickSendRandomString.bind(this, "HELLOOUNITY|0|0|0|tag|tagg|tagggg")}>
-        CLICK TO SEND RANDOM STRING
-      
       <div>
       <Unity src='Build/brbuld.json' loader='Build/UnityLoader.js'
       onProgress={ this.onProgress.bind(this) } />
-      </div>
       </div>
     );
   }
