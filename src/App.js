@@ -118,8 +118,18 @@ class App extends React.Component {
   // calls markov
   predictText(payload){
     var dummy = "1|dog|eat|red"
-    fetch(`http://localhost:4000/markov/${dummy}`).then((response) => {
-      console.log("Inside Fetch : ", response)
+    var startTime, endTime;
+    startTime = new Date();
+
+    fetch(`http://localhost:4000/markov/${dummy}`)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      endTime = new Date();
+      var timeDiff = endTime - startTime; //in ms
+      timeDiff /= 1000;       // strip the ms
+      var seconds = Math.round(timeDiff);
+      console.log(seconds + " seconds elapsed");
+      console.log("Inside Fetch 2: ", responseJson, responseJson.predicted)
     })
     console.log('PREDICT PREDICT')
   }
