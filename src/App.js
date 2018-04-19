@@ -31,6 +31,7 @@ class App extends React.Component {
     this.loadData = new UnityEvent("ReactManagerObject", "LoadData");
     // unity will ping this
     RegisterExternalListener('SaveData', this.postToFirebase.bind(this));
+    RegisterExternalListener('MarkovTest', this.predictText.bind(this));
 
   }
 
@@ -76,11 +77,9 @@ class App extends React.Component {
     // can increase this to last 100, once we test 5 is reached
     this.tagDataCallback = this.tagDataRef.limitToLast(100).once('value', (snap) => {
       var payload = snap.val();
-      console.log("tagData:   ", typeof payload, payload);
       // # TODO: emit all to Unity, array of dictionaries?
       const userArray = Object.keys(payload);
       userArray.forEach(function(user, index){
-        console.log("0000::: ", user, payload[user]);
         var userPayload = payload[user];
         var entries = Object.keys(userPayload).map(i => {
           if(i != 'timestamp'){
@@ -103,7 +102,7 @@ class App extends React.Component {
     }, []);
     parameterArr.unshift(this.state.userID);
     var payload = parameterArr.join('|');
-    console.log(":::::::: sendToUnity", this.state.unityisLoaded, payload);
+    // console.log(":::::::: sendToUnity", this.state.unityisLoaded, payload);
     if(this.loadData.canEmit() && this.state.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
   }
 
@@ -116,17 +115,23 @@ class App extends React.Component {
       this.triggerLoadData()
     }
   }
-
+  // calls markov
+  predictText(payload){
+    var dummy = "1|dog|eat|red"
+    fetch(`http://localhost:4000/markov/${dummy}`).then((response) => {
+      console.log("Inside Fetch : ", response)
+    })
+    console.log('PREDICT PREDICT')
+  }
   // save function for listerner
-  postToFirebase(tags){
-    console.log("postToFirebase", tags)
-    var payload = tags.split('|');
+  postToFirebase(payload){
+    console.log("postToFirebase", payload)
+    var tags = payload.split('|');
     // positionX| postionY| positionZ| tag1| tag2| tag3
-    var positionX = payload[0];
-    var positionY = payload[1];
-    var positionZ = payload[2];
-    var tagString = payload.slice(3,-1);
-    console.log(positionX, positionY, positionZ, tagString);
+    var positionX = tags[0];
+    var positionY = tags[1];
+    var positionZ = tags[2];
+    var tagString = tags.slice(3,-1);
     // #3 change to sessionref path
     var newPostRef = this.userRef.push();
     newPostRef.set({
@@ -137,6 +142,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
+      <button onClick={this.predictText}> predict predict </button>
       <Unity src='Build/brbuld.json' loader='Build/UnityLoader.js'
       onProgress={ this.onProgress.bind(this) } />
       </div>

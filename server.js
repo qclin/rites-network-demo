@@ -1,12 +1,19 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-
+const markov = require('./markov');
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(9000);
-console.log('Listening on port 9000');
+
+app.get('/markov/:payload', function(req, res){
+  var payload = req.params.payload;
+  console.log("payload:: ",payload);
+  var result = markov.generateText(payload)
+  console.log("markoveedd: ", result)
+})
+app.listen(4000);
+console.log('Listening on port 4000');
