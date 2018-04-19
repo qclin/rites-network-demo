@@ -1,10 +1,8 @@
 var markov = require('markovchain')
       , fs = require('fs')
 
-// var catAccelerate = './text-markov/accelerationism/reader.txt'
-// var catMysticism = './text-markov/mysticism/chaos_protocol.txt'
-// var catPlantemotion = './text-markov/plant_emotion/nihms279216.txt'
-// var catYoutube = './text-markov/youtuber_says/reactionvideo.txt'
+var spawn = require("child_process").spawn;
+
 
 var useUpperCase = function(wordList) {
   var tmpList = Object.keys(wordList).filter(function(word) {
@@ -20,7 +18,17 @@ module.exports = {
     var txt = new markov(fs.readFileSync('./text-markov/textcat1.txt', 'utf8'))
     var sentence = txt.start(useUpperCase).end(15).process()
 
-    console.log(sentence)
+    console.log("before_spawn::", sentence, spawn)
+
+    var pythonProcess = spawn('python',["./parse.py","It is great way to be convincingly create solutions for the continued development of viral vectors"]);
+
+    pythonProcess.stdout.on('data', function (data){
+    // Do something with the data returned from python script
+      console.log('pythonProcess:::', data);
+      var interpreted = decodeURIComponent(data);
+      console.log('interpreted :::', interpreted); 
+    });
+
     return sentence
   }
 }
