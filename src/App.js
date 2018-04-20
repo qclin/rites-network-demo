@@ -4,14 +4,6 @@ import { UnityEvent, RegisterExternalListener } from "react-unity-webgl";
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import firebase from './scripts/firebase'
 import { signInAnonymously } from './scripts/auth'
-
-//components
-// import Header from './components/headerComponent/header';
-// import Footer from './components/footerComponent/footer';
-// import HomePage from './components/pages/homePage';
-// import Projects from './components/pages/projects';
-// import Contact from './components/pages/contact';
-//includes
 import './Assets/css/default.min.css';
 
 
@@ -60,10 +52,10 @@ class App extends React.Component {
         var timestamp = new Date().toString();
         firebase.database().ref('/tagData').child(userID).set({timestamp});
       }else{
-        console.log('user exists in database, continue ', userData);
+        // console.log('user exists in database, continue ', userData);
       }
     });
-    console.log("createUserEntry: tagData : userID :",  userID);
+    // console.log("createUserEntry: tagData : userID :",  userID);
   }
 
 
@@ -107,10 +99,10 @@ class App extends React.Component {
   }
 
   onProgress (progression) {
-    console.log (`Loading ${(progression * 100)} % ...`)
+    // console.log (`Loading ${(progression * 100)} % ...`)
     if (progression === 1){
       // perhaps need to move the emitting inside when progression is at 100 %
-      console.log (`Loading done!`)
+      // console.log (`Loading done!`)
       this.setState({unityisLoaded: true})
       this.triggerLoadData()
     }
@@ -131,11 +123,10 @@ class App extends React.Component {
       console.log(seconds + " seconds elapsed");
       console.log("Inside Fetch 2: ", responseJson, responseJson.predicted)
     })
-    console.log('PREDICT PREDICT')
   }
   // save function for listerner
   postToFirebase(payload){
-    console.log("postToFirebase", payload)
+    // console.log("postToFirebase", payload)
     var tags = payload.split('|');
     // positionX| postionY| positionZ| tag1| tag2| tag3
     var positionX = tags[0];

@@ -13,7 +13,7 @@ app.get('/', function (req, res) {
 app.get('/markov/:payload', function(req, res){
   var payload = req.params.payload;
   var result = markov.generateText(payload)
-  console.log("markoveedd: ", result)
+  console.log("markov and swapped", result)
   res.json({predicted : result});
 });
 app.listen(4000);
