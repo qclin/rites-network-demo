@@ -14,7 +14,11 @@ app.get('/markov/:payload', function(req, res){
   var payload = req.params.payload;
   var result = markov.generateText(payload)
   console.log("markov and swapped", result)
-  res.json({predicted : result});
+  result.then(function(data){
+    var predictedText = data.toString();
+    console.log("post promisesss : ", predictedText);
+    res.json({predicted : predictedText});
+  })
 });
 app.listen(4000);
 console.log('Listening on port 4000');

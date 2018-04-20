@@ -21,6 +21,8 @@ class App extends React.Component {
 
     // emit to unity here
     this.loadData = new UnityEvent("ReactManagerObject", "LoadData");
+    this.sendPrediction = new UnityEvent("ReactManagerObject", "MarkovSentenceLoad");
+
     // unity will ping this
     RegisterExternalListener('SaveData', this.postToFirebase.bind(this));
     RegisterExternalListener('MarkovTest', this.predictText.bind(this));
@@ -97,6 +99,10 @@ class App extends React.Component {
     // console.log(":::::::: sendToUnity", this.state.unityisLoaded, payload);
     if(this.loadData.canEmit() && this.state.unityisLoaded) this.loadData.emit(payload); // this is throwing error,
   }
+  sendPredictionToUnity(entry){
+    console.log('sendPredictionToUnity :::::', entry);
+    if(this.sendPrediction.canEmit() && this.state.unityisLoaded) this.sendPrediction.emit(entry);
+  }
 
   onProgress (progression) {
     // console.log (`Loading ${(progression * 100)} % ...`)
@@ -109,7 +115,8 @@ class App extends React.Component {
   }
   // calls markov
   predictText(payload){
-    var dummy = "1|dog|eat|red"
+    var dummy = payload ? payload : "1|dog|eat|red"
+    var $this = this; // shallow copy of this, to pass inside fetch
     var startTime, endTime;
     startTime = new Date();
 
@@ -121,7 +128,8 @@ class App extends React.Component {
       timeDiff /= 1000;       // strip the ms
       var seconds = Math.round(timeDiff);
       console.log(seconds + " seconds elapsed");
-      console.log("Inside Fetch 2: ", responseJson, responseJson.predicted)
+      console.log("Inside Fetch 2: ", responseJson, responseJson.predicted);
+      $this.sendPredictionToUnity(responseJson.predicted); /// not passing atm .... BUG 
     })
   }
   // save function for listerner
